@@ -136,14 +136,14 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
     // Filter by color in variants
     if (color) {
       filteredResult = filteredResult.filter(p =>
-        p.variants.some(v => v.color.toLowerCase() === String(color).toLowerCase())
+        p.variants.some((v: any) => v.color.toLowerCase() === String(color).toLowerCase())
       );
     }
 
     // Filter by size in variants
     if (size) {
       filteredResult = filteredResult.filter(p =>
-        p.variants.some(v => v.size.toLowerCase() === String(size).toLowerCase())
+        p.variants.some((v: any) => v.size.toLowerCase() === String(size).toLowerCase())
       );
     }
 
