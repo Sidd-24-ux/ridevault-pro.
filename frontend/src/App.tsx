@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { AppProvider, useApp, CartItem } from './context/AppContext';
+import { AppProvider, useApp } from './context/AppContext';
 import api from './api/client';
 import { 
-  ShoppingBag, Shield, CheckCircle, AlertTriangle, User, LogOut, ArrowLeftRight, 
-  Sparkles, RefreshCw, BarChart2, Star, Plus, Minus, X, Trash2, Send, Info, Eye, Check, Edit2, ShieldAlert
+  ShoppingBag, Shield, CheckCircle, AlertTriangle, LogOut, ArrowLeftRight, 
+  Sparkles, RefreshCw, BarChart2, Plus, Minus, X, Trash2, Send, Info, Edit2, ShieldAlert
 } from 'lucide-react';
 
 // ----------------------------------------------------
@@ -24,7 +24,7 @@ export default App;
 // ----------------------------------------------------
 const RideVaultLayout: React.FC = () => {
   const { user, logout, notifications, dismissNotification } = useApp();
-  const [currentView, setCurrentView] = useState<'storefront' | 'detail' | 'cart' | 'compare' | 'ai' | 'vendor' | 'admin' | 'profile'>('storefront');
+  const [currentView, setCurrentView] = useState<'storefront' | 'detail' | 'cart' | 'compare' | 'ai' | 'vendor' | 'admin' | 'profile' | 'stitch'>('storefront');
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
@@ -710,7 +710,6 @@ const ProductDetailView: React.FC<{ productId: string; onBack: () => void }> = (
   // Review submission states
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState('');
-  const [reviewError, setReviewError] = useState('');
 
   const fetchProductDetails = async () => {
     setLoading(true);
@@ -761,7 +760,6 @@ const ProductDetailView: React.FC<{ productId: string; onBack: () => void }> = (
 
   const submitReview = async (e: React.FormEvent) => {
     e.preventDefault();
-    setReviewError('');
     try {
       // Direct mock write since reviews are simple
       await api.post('/api/orders/returns', { 
