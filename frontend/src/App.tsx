@@ -3,7 +3,7 @@ import { AppProvider, useApp } from './context/AppContext';
 import api from './api/client';
 import { 
   ShoppingBag, Shield, CheckCircle, AlertTriangle, LogOut, ArrowLeftRight, 
-  Sparkles, RefreshCw, BarChart2, Plus, Minus, X, Trash2, Send, Info, Edit2, ShieldAlert
+  Sparkles, RefreshCw, BarChart2, Plus, Minus, X, Trash2, Send, Info, ShieldAlert
 } from 'lucide-react';
 
 // ----------------------------------------------------
@@ -24,7 +24,7 @@ export default App;
 // ----------------------------------------------------
 const RideVaultLayout: React.FC = () => {
   const { user, logout, notifications, dismissNotification } = useApp();
-  const [currentView, setCurrentView] = useState<'storefront' | 'detail' | 'cart' | 'compare' | 'ai' | 'vendor' | 'admin' | 'profile' | 'stitch'>('storefront');
+  const [currentView, setCurrentView] = useState<'storefront' | 'detail' | 'cart' | 'compare' | 'ai' | 'vendor' | 'admin' | 'profile'>('storefront');
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
@@ -75,13 +75,7 @@ const RideVaultLayout: React.FC = () => {
               <Sparkles size={14} className="text-orange-400" />
               <span className="text-orange-400">AI Assistant</span>
             </button>
-            <button 
-              onClick={() => setCurrentView('stitch')} 
-              className={`text-sm font-medium hover:text-orange-400 transition-colors flex items-center space-x-1 ${currentView === 'stitch' ? 'text-orange-400' : 'text-slate-300'}`}
-            >
-              <Shield size={14} className="text-orange-400" />
-              <span>Stitch MCP</span>
-            </button>
+
 
             {/* Role Dashboards Shortcuts */}
             {user?.role === 'vendor' && (
@@ -226,9 +220,7 @@ const RideVaultLayout: React.FC = () => {
         {currentView === 'admin' && user?.role === 'admin' && (
           <AdminPortalView />
         )}
-        {currentView === 'stitch' && (
-          <StitchHubView />
-        )}
+
       </main>
 
       {/* 3. Floating AI Mini Helper */}
@@ -398,14 +390,47 @@ const AuthModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           </button>
         </p>
 
-        {/* Demo Credentials Panel */}
-        <div className="mt-6 pt-4 border-t border-brand-border/40 text-[11px] text-slate-400">
-          <p className="font-semibold text-slate-300 mb-1 flex items-center space-x-1">
-            <Info size={12} className="text-orange-400" />
-            <span>Sandbox Mode Note:</span>
-          </p>
-          <p>You can create any login, or register as a Vendor/Admin. To test out-of-the-box, register a new vendor and then use the Admin panel to approve the vendor profile.</p>
-        </div>
+        {/* Quick Demo Switcher */}
+        {!isRegister && (
+          <div className="mt-5 pt-4 border-t border-brand-border/40 space-y-2.5">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center space-x-1.5">
+              <Info size={12} className="text-orange-500" />
+              <span>Quick Role Switcher (One-Click Login)</span>
+            </p>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={async () => {
+                  await login('customer@ridevault.pro', 'customer123');
+                  onClose();
+                }}
+                className="py-1.5 px-2 bg-slate-800 hover:bg-slate-700 hover:text-orange-400 text-slate-300 rounded-lg text-[10px] font-bold border border-brand-border/60 transition-colors"
+              >
+                Rider (Customer)
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  await login('vendor@ridevault.pro', 'vendor123');
+                  onClose();
+                }}
+                className="py-1.5 px-2 bg-slate-800 hover:bg-slate-700 hover:text-orange-400 text-slate-300 rounded-lg text-[10px] font-bold border border-brand-border/60 transition-colors"
+              >
+                Gear Vendor
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  await login('admin@ridevault.pro', 'admin123');
+                  onClose();
+                }}
+                className="py-1.5 px-2 bg-slate-800 hover:bg-slate-700 hover:text-orange-400 text-slate-300 rounded-lg text-[10px] font-bold border border-brand-border/60 transition-colors"
+              >
+                Platform Admin
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -463,7 +488,32 @@ const StorefrontView: React.FC<{ onSelectProduct: (id: string) => void }> = ({ o
   const brands = ['Arai', 'Alpinestars', 'Dainese', 'Klim', 'RevIt', 'Rynox'];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <div className="space-y-8 animate-fade-in">
+      {/* Premium Hero Banner */}
+      <div className="relative overflow-hidden rounded-3xl border border-brand-border bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6 md:p-10 shadow-2xl flex flex-col md:flex-row justify-between items-center gap-6">
+        {/* Background glow animations */}
+        <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-64 h-64 bg-orange-500/10 rounded-full blur-[80px] pointer-events-none"></div>
+        <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-64 h-64 bg-amber-500/10 rounded-full blur-[80px] pointer-events-none"></div>
+        
+        <div className="relative z-10 space-y-4 text-center md:text-left max-w-lg">
+          <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-widest font-mono">
+            <span>Enterprise Ride Staging</span>
+          </div>
+          <h2 className="text-3xl md:text-5xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-100 via-orange-400 to-amber-500">
+            GEAR UP. RIDE SAFE.
+          </h2>
+          <p className="text-xs md:text-sm text-slate-400 leading-relaxed">
+            Welcome to the ultimate motorcycle gear marketplace. Browse helmets, leather jackets, carbon-reinforced gloves, and track racing boots with real-time warehouse stock tracking.
+          </p>
+        </div>
+
+        {/* Motorcycle Accent Silhouette Icon */}
+        <div className="relative z-10 flex justify-center items-center h-32 w-32 md:h-44 md:w-44 text-slate-800/20">
+          <span className="text-7xl md:text-9xl select-none filter drop-shadow-[0_15px_15px_rgba(249,115,22,0.15)] animate-pulse">🏍️</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
       {/* Filters Sidebar */}
       <div className="lg:col-span-1 space-y-6">
         <div className="glass-panel rounded-2xl p-5 border border-brand-border">
@@ -619,6 +669,12 @@ const StorefrontView: React.FC<{ onSelectProduct: (id: string) => void }> = ({ o
             {products.map(product => {
               const image = product.images?.[0] || 'https://images.unsplash.com/photo-1599819811279-d5ad9cccf838?auto=format&fit=crop&q=80&w=400';
               const isCompared = comparisonList.some(p => p._id === product._id);
+              const totalStock = product.totalStock || 0;
+              const stockBadgeColor = totalStock > 10 
+                ? 'bg-green-500/10 border-green-500/30 text-green-400' 
+                : totalStock > 0 
+                  ? 'bg-amber-500/10 border-amber-500/30 text-amber-400' 
+                  : 'bg-red-500/10 border-red-500/30 text-red-400';
 
               return (
                 <div key={product._id} className="glass-card rounded-2xl overflow-hidden flex flex-col h-full border border-brand-border/40">
@@ -648,7 +704,11 @@ const StorefrontView: React.FC<{ onSelectProduct: (id: string) => void }> = ({ o
                   <div className="p-4 flex-grow flex flex-col justify-between">
                     <div>
                       <div className="flex justify-between items-center mb-1">
-                        <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">{product.brand}</span>
+                        <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider flex items-center space-x-1">
+                          <span>{product.brand}</span>
+                          <span className="text-slate-600">•</span>
+                          <span className="text-amber-400 font-mono">★ {product.averageRating || '4.5'}</span>
+                        </span>
                         <span className="text-xs font-semibold text-orange-400">{product.category}</span>
                       </div>
                       <h4 
@@ -666,7 +726,11 @@ const StorefrontView: React.FC<{ onSelectProduct: (id: string) => void }> = ({ o
                         <p className="text-base font-extrabold text-slate-200">₹{product.basePrice}</p>
                       </div>
 
-                      <div className="flex items-center space-x-1">
+                      <div className="flex items-center space-x-1.5">
+                        <span className={`px-2 py-0.5 border rounded-full text-[9px] font-bold uppercase tracking-wider ${stockBadgeColor}`}>
+                          {totalStock > 0 ? `${totalStock} Stock` : 'Out of Stock'}
+                        </span>
+
                         {/* Comparison Switcher */}
                         <button 
                           onClick={(e) => {
@@ -695,6 +759,7 @@ const StorefrontView: React.FC<{ onSelectProduct: (id: string) => void }> = ({ o
         )}
       </div>
     </div>
+  </div>
   );
 };
 
@@ -1820,19 +1885,45 @@ const VendorPortalView: React.FC = () => {
         <div className="space-y-6">
           {/* Key KPI cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div className="glass-panel p-4 border border-brand-border rounded-xl">
-              <span className="text-[10px] text-slate-400 uppercase font-black">Gross Sales Revenue</span>
-              <p className="text-2xl font-black text-slate-200">₹{products.length * 45000}</p>
+            {/* Gross Sales Revenue */}
+            <div className="relative overflow-hidden rounded-2xl border border-brand-border bg-gradient-to-br from-slate-900 to-slate-950 p-5 shadow-xl flex justify-between items-center group hover:border-amber-500/40 transition-all duration-300">
+              <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all duration-500 pointer-events-none"></div>
+              <div className="relative z-10 space-y-1">
+                <span className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Gross Sales Revenue</span>
+                <p className="text-2xl font-black text-slate-100 font-mono">₹{(products.length * 45000).toLocaleString('en-IN')}</p>
+                <p className="text-[10px] text-slate-500">Live platform performance</p>
+              </div>
+              <div className="relative z-10 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 group-hover:scale-110 transition-transform duration-300">
+                <BarChart2 size={20} />
+              </div>
             </div>
-            <div className="glass-panel p-4 border border-brand-border rounded-xl">
-              <span className="text-[10px] text-slate-400 uppercase font-black">Active Products</span>
-              <p className="text-2xl font-black text-slate-200">{products.length}</p>
+
+            {/* Active Products */}
+            <div className="relative overflow-hidden rounded-2xl border border-brand-border bg-gradient-to-br from-slate-900 to-slate-950 p-5 shadow-xl flex justify-between items-center group hover:border-orange-500/40 transition-all duration-300">
+              <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-orange-500/10 rounded-full blur-2xl group-hover:bg-orange-500/20 transition-all duration-500 pointer-events-none"></div>
+              <div className="relative z-10 space-y-1">
+                <span className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Active Products</span>
+                <p className="text-2xl font-black text-slate-100 font-mono">{products.length}</p>
+                <p className="text-[10px] text-slate-500">Catalogued inventory entries</p>
+              </div>
+              <div className="relative z-10 p-3 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-400 group-hover:scale-110 transition-transform duration-300">
+                <ShoppingBag size={20} />
+              </div>
             </div>
-            <div className="glass-panel p-4 border border-brand-border rounded-xl">
-              <span className="text-[10px] text-slate-400 uppercase font-black">Low-Stock Warnings</span>
-              <p className="text-2xl font-black text-red-400">
-                {products.reduce((count, p) => count + (p.variants || []).filter((v: any) => v.totalStock < 3).length, 0)}
-              </p>
+
+            {/* Low-Stock Warnings */}
+            <div className="relative overflow-hidden rounded-2xl border border-brand-border bg-gradient-to-br from-slate-900 to-slate-950 p-5 shadow-xl flex justify-between items-center group hover:border-red-500/40 transition-all duration-300">
+              <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-red-500/10 rounded-full blur-2xl group-hover:bg-red-500/20 transition-all duration-500 pointer-events-none"></div>
+              <div className="relative z-10 space-y-1">
+                <span className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Low-Stock Warnings</span>
+                <p className="text-2xl font-black text-red-400 font-mono">
+                  {products.reduce((count, p) => count + (p.variants || []).filter((v: any) => v.totalStock < 3).length, 0)}
+                </p>
+                <p className="text-[10px] text-slate-500">Items requiring restock action</p>
+              </div>
+              <div className="relative z-10 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 group-hover:scale-110 transition-transform duration-300">
+                <AlertTriangle size={20} />
+              </div>
             </div>
           </div>
 
@@ -2190,22 +2281,57 @@ const AdminPortalView: React.FC = () => {
 
       {/* KPI Cards */}
       {stats && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-slate-900 border border-brand-border p-4 rounded-xl">
-            <span className="text-[10px] text-slate-400 uppercase font-black">Platform Revenue</span>
-            <p className="text-xl font-black text-slate-100">₹{stats.kpis?.totalRevenue}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Platform Revenue */}
+          <div className="relative overflow-hidden rounded-2xl border border-brand-border bg-gradient-to-br from-slate-900 to-slate-950 p-5 shadow-xl flex justify-between items-center group hover:border-red-500/40 transition-all duration-300">
+            <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-red-500/10 rounded-full blur-2xl group-hover:bg-red-500/20 transition-all duration-500 pointer-events-none"></div>
+            <div className="relative z-10 space-y-1">
+              <span className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Platform Revenue</span>
+              <p className="text-xl font-black text-slate-100 font-mono">₹{Number(stats.kpis?.totalRevenue || 0).toLocaleString('en-IN')}</p>
+              <p className="text-[10px] text-slate-500">Gross processed volume</p>
+            </div>
+            <div className="relative z-10 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 group-hover:scale-110 transition-transform duration-300">
+              <BarChart2 size={20} />
+            </div>
           </div>
-          <div className="bg-slate-900 border border-brand-border p-4 rounded-xl">
-            <span className="text-[10px] text-slate-400 uppercase font-black">Total Orders</span>
-            <p className="text-xl font-black text-slate-100">{stats.kpis?.totalOrders}</p>
+
+          {/* Total Orders */}
+          <div className="relative overflow-hidden rounded-2xl border border-brand-border bg-gradient-to-br from-slate-900 to-slate-950 p-5 shadow-xl flex justify-between items-center group hover:border-orange-500/40 transition-all duration-300">
+            <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-orange-500/10 rounded-full blur-2xl group-hover:bg-orange-500/20 transition-all duration-500 pointer-events-none"></div>
+            <div className="relative z-10 space-y-1">
+              <span className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Total Orders</span>
+              <p className="text-xl font-black text-slate-100 font-mono">{stats.kpis?.totalOrders || 0}</p>
+              <p className="text-[10px] text-slate-500">Completed purchases</p>
+            </div>
+            <div className="relative z-10 p-3 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-400 group-hover:scale-110 transition-transform duration-300">
+              <ShoppingBag size={20} />
+            </div>
           </div>
-          <div className="bg-slate-900 border border-brand-border p-4 rounded-xl">
-            <span className="text-[10px] text-slate-400 uppercase font-black">Registered Sellers</span>
-            <p className="text-xl font-black text-slate-100">{stats.kpis?.totalVendors}</p>
+
+          {/* Registered Sellers */}
+          <div className="relative overflow-hidden rounded-2xl border border-brand-border bg-gradient-to-br from-slate-900 to-slate-950 p-5 shadow-xl flex justify-between items-center group hover:border-amber-500/40 transition-all duration-300">
+            <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all duration-500 pointer-events-none"></div>
+            <div className="relative z-10 space-y-1">
+              <span className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Registered Sellers</span>
+              <p className="text-xl font-black text-slate-100 font-mono">{stats.kpis?.totalVendors || 0}</p>
+              <p className="text-[10px] text-slate-500">Approved platform merchants</p>
+            </div>
+            <div className="relative z-10 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 group-hover:scale-110 transition-transform duration-300">
+              <Shield size={20} />
+            </div>
           </div>
-          <div className="bg-slate-900 border border-brand-border p-4 rounded-xl">
-            <span className="text-[10px] text-slate-400 uppercase font-black">Catalog Products</span>
-            <p className="text-xl font-black text-slate-100">{stats.kpis?.totalProducts}</p>
+
+          {/* Catalog Products */}
+          <div className="relative overflow-hidden rounded-2xl border border-brand-border bg-gradient-to-br from-slate-900 to-slate-950 p-5 shadow-xl flex justify-between items-center group hover:border-slate-500/40 transition-all duration-300">
+            <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-slate-500/10 rounded-full blur-2xl group-hover:bg-slate-500/20 transition-all duration-500 pointer-events-none"></div>
+            <div className="relative z-10 space-y-1">
+              <span className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Catalog Products</span>
+              <p className="text-xl font-black text-slate-100 font-mono">{stats.kpis?.totalProducts || 0}</p>
+              <p className="text-[10px] text-slate-500">Live active listings</p>
+            </div>
+            <div className="relative z-10 p-3 rounded-xl bg-slate-500/10 border border-slate-500/20 text-slate-400 group-hover:scale-110 transition-transform duration-300">
+              <AlertTriangle size={20} />
+            </div>
           </div>
         </div>
       )}
@@ -2273,292 +2399,4 @@ const AdminPortalView: React.FC = () => {
   );
 };
 
-// ----------------------------------------------------
-// STITCH MCP CONSOLE VIEW
-// ----------------------------------------------------
-const StitchHubView: React.FC = () => {
-  const [tools, setTools] = useState<any[]>([]);
-  const [selectedTool, setSelectedTool] = useState<any | null>(null);
-  const [argumentsJson, setArgumentsJson] = useState('{}');
-  const [terminalLogs, setTerminalLogs] = useState<Array<{ timestamp: string; type: 'info' | 'sent' | 'received' | 'error'; message: string }>>([
-    { timestamp: new Date().toLocaleTimeString(), type: 'info', message: 'Stitch MCP Console Initialized. Connected to: https://stitch.googleapis.com/mcp' }
-  ]);
-  const [loading, setLoading] = useState(true);
-  const [executing, setExecuting] = useState(false);
 
-  // Connection settings states
-  const [serverUrl, setServerUrl] = useState('https://stitch.googleapis.com/mcp');
-  const [apiKey, setApiKey] = useState('');
-  const [showApiKey, setShowApiKey] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
-  const [saveLoading, setSaveLoading] = useState(false);
-
-  const fetchConfigAndTools = async () => {
-    setLoading(true);
-    try {
-      // Get saved config
-      const configRes = await api.get('/api/stitch/config');
-      setServerUrl(configRes.data.serverUrl || 'https://stitch.googleapis.com/mcp');
-      
-      const headers = configRes.data.headers || {};
-      const keyHeader = Object.keys(headers).find(k => k.toLowerCase() === 'x-goog-api-key') || '';
-      setApiKey(keyHeader ? headers[keyHeader] : '');
-
-      // Load tools
-      const res = await api.get('/api/stitch/tools');
-      setTools(res.data);
-      if (res.data && res.data.length > 0) {
-        setSelectedTool(res.data[0]);
-        setArgumentsJson(res.data[0].schema);
-      }
-    } catch (err) {
-      setTerminalLogs(prev => [...prev, { timestamp: new Date().toLocaleTimeString(), type: 'error', message: 'Failed to retrieve Stitch MCP config or tools.' }]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchConfigAndTools();
-  }, []);
-
-  const handleSelectTool = (tool: any) => {
-    setSelectedTool(tool);
-    setArgumentsJson(tool.schema);
-    setTerminalLogs(prev => [...prev, { timestamp: new Date().toLocaleTimeString(), type: 'info', message: `Selected tool: ${tool.name}` }]);
-  };
-
-  const handleSaveConfig = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaveLoading(true);
-    try {
-      await api.post('/api/stitch/config', {
-        serverUrl,
-        headers: {
-          'X-Goog-Api-Key': apiKey
-        }
-      });
-      setTerminalLogs(prev => [...prev, { timestamp: new Date().toLocaleTimeString(), type: 'info', message: 'Stitch MCP configuration updated successfully. Discovering tools...' }]);
-      
-      // Reload tools list
-      const res = await api.get('/api/stitch/tools');
-      setTools(res.data);
-      if (res.data && res.data.length > 0) {
-        setSelectedTool(res.data[0]);
-        setArgumentsJson(res.data[0].schema);
-      } else {
-        setSelectedTool(null);
-        setArgumentsJson('{}');
-      }
-      setShowSettings(false);
-    } catch (err) {
-      setTerminalLogs(prev => [...prev, { timestamp: new Date().toLocaleTimeString(), type: 'error', message: 'Failed to update Stitch configuration.' }]);
-    } finally {
-      setSaveLoading(false);
-    }
-  };
-
-  const handleExecute = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedTool) return;
-    setExecuting(true);
-    
-    let parsedArgs = {};
-    try {
-      parsedArgs = JSON.parse(argumentsJson);
-    } catch (err) {
-      setTerminalLogs(prev => [...prev, { timestamp: new Date().toLocaleTimeString(), type: 'error', message: 'Invalid JSON payload arguments input.' }]);
-      setExecuting(false);
-      return;
-    }
-
-    setTerminalLogs(prev => [
-      ...prev,
-      { timestamp: new Date().toLocaleTimeString(), type: 'sent', message: `Invoking '${selectedTool.name}' with args: ${argumentsJson}` }
-    ]);
-
-    try {
-      const res = await api.post('/api/stitch/execute', {
-        toolName: selectedTool.name,
-        args: parsedArgs
-      });
-      
-      setTerminalLogs(prev => [
-        ...prev,
-        { timestamp: new Date().toLocaleTimeString(), type: 'received', message: `Received output:\n${JSON.stringify(res.data.output, null, 2)}` }
-      ]);
-    } catch (err) {
-      setTerminalLogs(prev => [
-        ...prev,
-        { timestamp: new Date().toLocaleTimeString(), type: 'error', message: `Execution failed: Relayed endpoint returned server error.` }
-      ]);
-    } finally {
-      setExecuting(false);
-    }
-  };
-
-  return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-900/60 p-4 border border-brand-border rounded-xl">
-        <div>
-          <h2 className="text-2xl font-black text-slate-100 flex items-center space-x-2">
-            <Shield className="text-orange-500" />
-            <span>Stitch MCP Console</span>
-          </h2>
-          <p className="text-xs text-slate-400 mt-1">Interactive configuration sandbox for verifying and executing Stitch API JSON-RPC discovery tools</p>
-        </div>
-        
-        <div className="flex items-center space-x-3">
-          <button
-            onClick={() => setShowSettings(!showSettings)}
-            className="px-3 py-1.5 bg-slate-800 border border-brand-border text-xs font-bold rounded-lg text-slate-300 hover:text-orange-400 flex items-center space-x-1.5 transition-colors"
-          >
-            <Edit2 size={12} />
-            <span>Edit Connection</span>
-          </button>
-          
-          <div className="flex items-center space-x-1.5 bg-green-500/10 border border-green-500/20 px-2.5 py-1 rounded-lg">
-            <span className="h-1.5 w-1.5 bg-green-400 rounded-full animate-ping"></span>
-            <span className="text-[10px] text-green-400 font-bold uppercase tracking-wider font-mono">Active</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Configuration settings overlay editor */}
-      {showSettings && (
-        <div className="glass-panel p-5 border border-brand-border rounded-2xl space-y-4">
-          <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider">Configure Stitch MCP Server Connection</h3>
-          
-          <form onSubmit={handleSaveConfig} className="space-y-4 text-xs">
-            <div>
-              <label className="block text-[10px] font-semibold text-slate-400 mb-1">Server Url</label>
-              <input 
-                type="text" 
-                required
-                className="w-full bg-slate-950 border border-brand-border rounded-lg p-2 text-slate-100 focus:outline-none focus:border-orange-500 font-mono"
-                value={serverUrl}
-                onChange={e => setServerUrl(e.target.value)}
-              />
-            </div>
-
-            <div>
-              <label className="block text-[10px] font-semibold text-slate-400 mb-1">X-Goog-Api-Key (Headers)</label>
-              <div className="relative">
-                <input 
-                  type={showApiKey ? 'text' : 'password'}
-                  required
-                  className="w-full bg-slate-950 border border-brand-border rounded-lg pl-2 pr-12 py-2 text-slate-100 focus:outline-none focus:border-orange-500 font-mono"
-                  value={apiKey}
-                  onChange={e => setApiKey(e.target.value)}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowApiKey(!showApiKey)}
-                  className="absolute right-2.5 top-2 py-0.5 text-[10px] text-slate-500 hover:text-slate-300 font-bold"
-                >
-                  {showApiKey ? 'HIDE' : 'SHOW'}
-                </button>
-              </div>
-            </div>
-
-            <div className="flex justify-end space-x-3 pt-2 border-t border-brand-border/40">
-              <button 
-                type="button"
-                onClick={() => setShowSettings(false)}
-                className="px-4 py-1.5 border border-slate-700 text-slate-400 hover:text-slate-200 rounded-lg"
-              >
-                Cancel
-              </button>
-              <button 
-                type="submit"
-                disabled={saveLoading}
-                className="px-4 py-1.5 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-lg orange-glow"
-              >
-                {saveLoading ? 'Saving config...' : 'Apply & Reload'}
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {/* Grid: Tools list vs Execute sandbox */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Side: Tools List */}
-        <div className="lg:col-span-1 glass-panel border border-brand-border p-5 rounded-2xl space-y-4">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Available MCP Tools</h3>
-          {loading ? (
-            <div className="flex justify-center py-10"><RefreshCw className="animate-spin text-orange-500" /></div>
-          ) : tools.length === 0 ? (
-            <p className="text-xs text-slate-500 py-10 text-center">No tools discovered.</p>
-          ) : (
-            <div className="space-y-2">
-              {tools.map(t => (
-                <button
-                  key={t.name}
-                  type="button"
-                  onClick={() => handleSelectTool(t)}
-                  className={`w-full text-left p-3 border rounded-xl transition-all block ${selectedTool?.name === t.name ? 'border-orange-500 bg-orange-500/10' : 'border-slate-800 bg-slate-950/60 hover:border-slate-700'}`}
-                >
-                  <p className="text-xs font-bold text-slate-200 font-mono">{t.name}</p>
-                  <p className="text-[10px] text-slate-400 mt-1">{t.description}</p>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Right Side: Execute Sandbox & Terminal Output */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="glass-panel border border-brand-border p-5 rounded-2xl space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Tool Arguments Sandbox</h3>
-            {selectedTool ? (
-              <form onSubmit={handleExecute} className="space-y-3">
-                <div>
-                  <span className="text-[10px] text-slate-400 block mb-1">Target Endpoint</span>
-                  <p className="text-xs font-bold text-orange-400 font-mono bg-slate-950 p-2 border border-brand-border rounded-lg">{selectedTool.name}</p>
-                </div>
-
-                <div>
-                  <label className="block text-[10px] font-semibold text-slate-400 mb-1">Arguments JSON Input</label>
-                  <textarea
-                    rows={4}
-                    className="w-full bg-slate-950 border border-brand-border rounded-lg p-3 text-xs text-slate-100 focus:outline-none focus:border-orange-500 font-mono"
-                    value={argumentsJson}
-                    onChange={e => setArgumentsJson(e.target.value)}
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={executing}
-                  className="w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-lg text-xs uppercase tracking-widest transition-colors orange-glow"
-                >
-                  {executing ? 'Executing tool request...' : 'Call Stitch MCP'}
-                </button>
-              </form>
-            ) : (
-              <p className="text-xs text-slate-500 py-10 text-center">No tool selected</p>
-            )}
-          </div>
-
-          {/* Console Logs */}
-          <div className="glass-panel border border-brand-border p-5 rounded-2xl space-y-3">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Terminal Log Console</h3>
-            <div className="bg-slate-950 p-4 rounded-xl border border-brand-border/60 h-48 overflow-y-auto font-mono text-[10px] space-y-2 select-text">
-              {terminalLogs.map((log, idx) => (
-                <div key={idx} className="flex gap-2">
-                  <span className="text-slate-500 shrink-0">[{log.timestamp}]</span>
-                  <span className={`font-bold shrink-0 ${log.type === 'sent' ? 'text-blue-400' : log.type === 'received' ? 'text-green-400' : log.type === 'error' ? 'text-red-400' : 'text-slate-400'}`}>
-                    {log.type.toUpperCase()}:
-                  </span>
-                  <pre className="text-slate-300 whitespace-pre-wrap font-sans">{log.message}</pre>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
